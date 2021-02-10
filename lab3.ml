@@ -1,3 +1,4 @@
+
 (* 
                               CS51 Lab 3
                     Polymorphism and record types
@@ -47,7 +48,7 @@ expression.
 
 let add_point_pair (p1 : point_pair) (p2 : point_pair) : point_pair =
   let (x1, y1), (x2, y2) = p1, p2 in
-  (x1 + x2, y1 + y2) ;;
+  x1 + x2, y1 + y2 ;;
 
 (* Analogously, we can define a point by using a record to package up
 the x and y coordinates. *)
@@ -72,7 +73,7 @@ Implement a function `add_point_recd` to add two points of type
 `point_recd` and returning a `point_recd` as well.
 ......................................................................*)
 
-(* A direct reimplementation of add_point_pair would be: *)
+(* A direct reimplementation of `add_point_pair` would be: *)
 
 let add_point_recd (p1 : point_recd) (p2 : point_recd) : point_recd =
   let {x = x1; y = y1}, {x = x2; y = y2} = p1, p2 in
@@ -100,7 +101,8 @@ let dot_product_pair (x1, y1 : point_pair) (x2, y2 : point_pair) : int =
 (* In this example, we've gone even further, performing the match
    directly in the `let` definition itself. This is actually the
    stylistically preferred way of implementing this in OCaml, as
-   discussed in the Style Guide. *)
+   discussed in the Style Guide. Can you adjust the solution to
+   Exercises 1 and 2B to use this syntactic sugar? *)
 
 (*......................................................................
 Exercise 4: Write a function `dot_product_recd` to compute the dot
@@ -126,7 +128,7 @@ let point_pair_to_recd (x, y : point_pair) : point_recd =
   {x; y} ;;
 
 (* Note the use of pattern-matching for deconstruction directly in the
-   argument and of field punning. *)
+   argument and of "field punning". *)
 
 (*......................................................................
 Exercise 6: Write a function `point_recd_to_pair` that converts a
@@ -211,16 +213,18 @@ For example:
     - : int list = [482958285; 603858772; 993855891]
 ......................................................................*)
 
-(* Making good use of library function List.sort_unique, as well as
-   Stdlib.compare, we have the following succinct implementation. *)
+(* Making good use of the recommended library functions, we have the
+   following succinct implementation: *)
     
 let ids (enrollments: enrollment list) : int list =
   List.sort_uniq (compare)
                  (List.map (fun student -> student.id) enrollments) ;;
 
 (* This time we used the alternative strategy of picking out the `id`
-   using dot notation. The aggregation to eliminate duplicates can also
-   be done using a fold. We leave that strategy as an additional
+   using dot notation.
+
+   By the way, the aggregation to eliminate duplicates can also be
+   done using a fold. We leave that strategy as an additional
    exercise. *)
   
 (*......................................................................
@@ -304,13 +308,13 @@ Now implement the function yourself (without using `List.partition`,
 though other `List` module functions may be useful).
 ......................................................................*)
    
-(* Start with the type. The boolean condition might apply to elements of
-   any type, so it should be a function of type `'a -> bool`. The list
-   must contain elements appropriate to apply the condition to, that is,
-   elements of type `'a`, so the list itself is of type `'a list`. The
-   result is a pair of lists, each of which contains elements of type
-   `'a`, that is, `'a list * 'a list`. The type of partition itself is
-   then
+(* Let's start by working out the type. The boolean condition might
+   apply to elements of any type, so it should be a function of type
+   `'a -> bool`. The list must contain elements appropriate to apply
+   the condition to, that is, elements of type `'a`, so the list
+   itself is of type `'a list`. The result is a pair of lists, each of
+   which contains elements of type `'a`, that is, `'a list * 'a
+   list`. The type of partition itself is then
 
       ('a -> bool) -> 'a list -> 'a list * 'a list
 
@@ -322,8 +326,8 @@ let partition (condition : 'a -> bool) (lst : 'a list)
   let open List in
   filter condition lst, filter (fun x -> not (condition x)) lst ;;
 
-(* If, instead, we want to perform the walk of the list directly, we
-   might have
+(* If, instead, we want to perform the walking of the list directly,
+   we might have
 
     let rec partition (condition : 'a -> bool) (lst : 'a list)
                     : 'a list * 'a list =
@@ -343,7 +347,7 @@ let partition (condition : 'a -> bool) (lst : 'a list)
                          else yeses, (elt :: noes))
                       lst 
                       ([], []) ;;
- *)
+   *)
 
   
 
@@ -401,9 +405,10 @@ useful?
       'result`.
 
    2. Its second argument is the argument to apply that function to,
-      and must thus be of type 'arg.
+      and must thus be of type `'arg`.
 
-   3. The result of the application is, of course, 'result.
+   3. The type of the result of the application is, of course,
+      `'result`.
 
    4. So the type for apply is given by the typing:
 
